@@ -4,7 +4,7 @@ import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { compatibilityNote, loraCompatibility, strengthRange } from './lora-policy.js';
+import { compatibilityNote, compatibleLoras, loraCompatibility, strengthRange } from './lora-policy.js';
 import { enrichLocalLoraInfo, optionalLoraPolicyIssue } from './lora-catalogue.js';
 
 const profile = { id: 'custom:fl', family: 'minimax_h3', baseModel: 'models/h3.safetensors', recipe: { conditioning: 'FL2VA' } };
@@ -78,4 +78,33 @@ test('FLUX.3 adapters fit built-in and imported Klein family identifiers', () =>
   assert.equal(loraCompatibility({ families: ['flux3'] }, { family: 'flux3_klein' }), 'fits');
   assert.equal(loraCompatibility({ families: ['flux3_klein'] }, { family: 'flux3' }), 'fits');
   assert.equal(loraCompatibility({ families: ['flux3'] }, { family: 'flux1' }), 'other');
+});
+
+// Kromafine Turbo as deployed on Bento (ai/config/studio/workflows): a Krea 2 derivative.
+const kromafine = { id: 'custom:bento-image-kromafine-turbo-int8-convrot', family: 'krea2', label: 'Kromafine Turbo V1.0 · Fast · 8 Steps · Optional Reference · INT8', defaults: { model: 'kromafineTurboBF16FP8_v10_3291478.safetensors' } };
+const loraholic = { families: ['zimage'], base: 'Z-Image', title: 'ass_2_loraholic' };
+
+test('a LoRA for another family is refused on submit, whether or not its publisher lists variants', () => {
+  assert.equal(loraCompatibility(loraholic, kromafine), 'other');
+  assert.match(optionalLoraPolicyIssue({ name: 'ass_2_loraholic.safetensors', strength: 1 }, loraholic, kromafine), /^ass_2_loraholic is for Z-Image, not Kromafine Turbo V1\.0 · Fast/);
+  assert.equal(optionalLoraPolicyIssue({ name: 'krea.safetensors', strength: 1 }, { families: ['krea2'] }, kromafine), '');
+  assert.equal(optionalLoraPolicyIssue({ name: 'unread.safetensors', strength: 1 }, { families: [] }, kromafine), '', 'unverified LoRAs stay usable');
+  assert.equal(optionalLoraPolicyIssue({ name: 'custom.safetensors', strength: 1 }, loraholic, { family: 'custom' }), '', 'an imported workflow without a family is unknown');
+});
+
+test('compatibleLoras drops only other-family LoRAs from reused settings and counts them', () => {
+  const infos = { 'ass_2_loraholic.safetensors': loraholic, 'krea-style.safetensors': { families: ['krea2'] }, 'unread.safetensors': { families: [] } };
+  const stack = [
+    { name: 'krea-style.safetensors', strength: 0.8, enabled: true },
+    { name: 'ass_2_loraholic.safetensors', strength: 1, enabled: true },
+    { name: 'unread.safetensors', strength: 0.5, enabled: false },
+    { name: 'missing.safetensors', strength: 0.5 }
+  ];
+  const result = compatibleLoras(stack, infos, kromafine);
+  assert.deepEqual(result.loras, [stack[0], stack[2], stack[3]], 'order and shape are kept; unknown entries stay');
+  assert.equal(result.dropped, 1);
+  assert.deepEqual(result.droppedNames, ['ass_2_loraholic.safetensors']);
+  assert.deepEqual(compatibleLoras(['ass_2_loraholic.safetensors', 'krea-style.safetensors'], (name) => infos[name], kromafine), { loras: ['krea-style.safetensors'], dropped: 1, droppedNames: ['ass_2_loraholic.safetensors'] });
+  assert.deepEqual(compatibleLoras(undefined, infos, kromafine), { loras: [], dropped: 0, droppedNames: [] });
+  assert.equal(compatibleLoras(stack, infos, { ...kromafine, family: 'zimage' }).droppedNames[0], 'krea-style.safetensors');
 });
