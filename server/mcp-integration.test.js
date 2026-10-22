@@ -1199,7 +1199,7 @@ test('negative prompts reach the submission only where they take effect', async 
   assert.equal(f.submitted.length, 1);
 });
 
-test('written prompts carry LoRA triggers and tags, and a guide’s recommended negative fills in unless the caller gives one', async t => {
+test('every prompt carries missing LoRA triggers, written ones also tags, and a guide’s recommended negative fills in unless the caller gives one', async t => {
   const f = await fixture(t);
   const saved = loraInfo['fixture-unknown.safetensors'];
   loraInfo['fixture-unknown.safetensors'] = { families: [], base: '', triggers: ['inkstyle'], note: 'Put the trigger first.', promptStyle: 'tags', tags: ['ink wash', 'lighthouse', 'monochrome'], negative: 'colour bleed' };
@@ -1213,9 +1213,11 @@ test('written prompts carry LoRA triggers and tags, and a guide’s recommended 
   await call(client, 'Generate', { profile_id: imageProfile.id, request: 'A lighthouse at dusk in ink', loras });
   assert.equal(f.submitted.at(-1).prompt, 'inkstyle, A lighthouse at dusk in ink, glowfx\nink wash');
   assert.equal(f.submitted.at(-1).negative, 'blurry, low quality, colour bleed');
-  // The caller's own negative wins, and an exact prompt stays as written.
+  // The caller's own negative wins, and an exact prompt keeps its words with only the missing triggers added (no tag line).
   await call(client, 'Generate', { profile_id: imageProfile.id, request: 'A lighthouse at dusk', exact_prompt: true, negative_prompt: 'people', loras });
-  assert.deepEqual([f.submitted.at(-1).prompt, f.submitted.at(-1).negative], ['A lighthouse at dusk', 'people']);
+  assert.deepEqual([f.submitted.at(-1).prompt, f.submitted.at(-1).negative], ['inkstyle, A lighthouse at dusk, glowfx', 'people']);
+  await call(client, 'Generate', { profile_id: imageProfile.id, prompts: ['glowfx, a lighthouse'], loras });
+  assert.equal(f.submitted.at(-1).prompt, 'inkstyle, glowfx, a lighthouse');
   // Nothing fills at cfg 1, nor where the guide calls a negative optional.
   await call(client, 'Generate', { profile_id: imageProfile.id, request: 'A tree', cfg: 1 });
   assert.equal(f.submitted.at(-1).negative, undefined);
@@ -1448,7 +1450,8 @@ test('Reuse runs a result again with its profile and settings, a new seed and an
   assert.equal(rerun.seed, '', 'a new seed');
   const tweaked = data(await call(client, 'Reuse', { job_id: 'result 1', kind: 'image', prompt: 'A heron at dusk', count: 2 }));
   assert.equal(tweaked.jobs.length, 2);
-  assert.deepEqual(f.submitted.slice(2).map(body => [body.prompt, body.cfg]), [['A heron at dusk', 4], ['A heron at dusk', 4]]);
+  // The LoRA's trigger joins the new prompt.
+  assert.deepEqual(f.submitted.slice(2).map(body => [body.prompt, body.cfg]), [['A heron at dusk, glowfx', 4], ['A heron at dusk, glowfx', 4]]);
   assert.ok(models() - before <= 1, 'reads the cached catalogue at most once and needs no Models call');
   // A follow-up still waits like Generate, so a quick rerun returns finished markdown.
   f.completeOnSubmit();

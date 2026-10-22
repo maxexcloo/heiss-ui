@@ -276,8 +276,8 @@ export class McpMedia {
       const filled = recommendedNegative(profile.prompting, { cfg: cfg ?? profile.defaults?.cfg, stack, infos });
       if (filled) controls.negative = filled;
     }
-    // Written prompts (not exact ones) carry each LoRA's triggers and, for tag-trained LoRAs, a line of tags.
-    const styled = (prompt) => record.styled && stack.length ? withLoraPrompting(prompt, stack, infos, record.request || '') : prompt;
+    // Every prompt carries each LoRA's missing triggers; prompts Studio wrote also get tag-trained LoRAs' line of tags.
+    const styled = (prompt) => stack.length ? withLoraPrompting(prompt, stack, infos, record.request || '', { tags: Boolean(record.styled) }) : prompt;
     const slots = profile.mediaInputs || [];
     if (reference_asset_ids.length > slots.length || slots.some((slot, index) => slot.required && !reference_asset_ids[index])) throw new Error('Supply the references required by this profile.');
     for (const id of reference_asset_ids) this.own(owner, id, 'assets');

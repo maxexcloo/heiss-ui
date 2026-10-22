@@ -308,7 +308,7 @@ export function registerMcpRoutes(app, { dataDir, baseUrl, environment = process
         const detail = {
           ...Object.fromEntries(['id', 'label', 'kind', 'family', 'description', 'mediaInputs', 'aspectPolicy', 'aspectPresets', 'native'].filter(key => key in profile).map(key => [key, profile[key]])),
           tier: tierOf(profile), ...(tierNote ? { note: tierNote.trim() } : {}), defaults, controls, ...(modes ? { imageModes: modes, imageModes_note: 'A mode applies when its media is supplied, such as reference with references.' } : {}),
-          ...(controls.loras ? { loras, loras_total: total, loras_note: 'Each reads name — hint [trigger word]. Pass names to Generate; strength defaults to the recommended value. Studio adds trigger words to prompts it writes; with exact_prompt, put them in yourself.' } : {}),
+          ...(controls.loras ? { loras, loras_total: total, loras_note: 'Each reads name — hint [trigger word]. Pass names to Generate; strength defaults to the recommended value. Studio adds missing trigger words to every prompt.' } : {}),
           prompting: prompting(profile, true)
         };
         return mcpJson(detail);
