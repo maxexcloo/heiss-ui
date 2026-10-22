@@ -36,7 +36,6 @@ import { useCopyFeedback } from './CopyFeedback';
 import { DetailsFooter, PromptReadout, generationInputsText } from './ViewerActions';
 import { useMediaFileSize } from './mediaFileSize';
 import { itemProfileName, itemProfileTitle } from './itemProfile';
-import { LoraDetails, LoraSources } from './LoraPanel';
 import { loraName } from './catalogueNames';
 import { fetchLoraInfo, knownLoraInfo } from './useLoraInfo';
 
@@ -362,8 +361,7 @@ export function StudioView({ view }: { view: StudioViewModel }) {
         if (tile) tile.scrollIntoView({ block: "center", behavior: scrollBehavior() });
         else galleryStageRef.current?.scrollTo({ top: 0, behavior: scrollBehavior() });
       });
-    },
-    onView: (item) => openItem(item)
+    }
   });
   const [islandsHeight, setIslandsHeight] = React.useState(0);
   // An activity pill or the filter row joining the top never shoves the tiles on screen.
@@ -765,11 +763,9 @@ export function StudioView({ view }: { view: StudioViewModel }) {
                                 <ul className="detail-loras" aria-label="LoRAs">
                                   {section.loras.map((lora, index) => (
                                     <li key={`${lora.name}-${index}`} className="detail-lora">
-                                      {/* As in the LoRA chooser: the name, then on the right its strength and View Source; its information under the name. */}
+                                      {/* Only what it was run with: the name, then its strength on the right. */}
                                       <span className="detail-lora-name" title={lora.file}>{lora.name}</span>
                                       <span className="detail-lora-strength" aria-label={`Strength ${lora.strength}`}>{lora.strength}</span>
-                                      <LoraSources info={loraInfoOf(lora.file)} label={lora.name} />
-                                      <LoraDetails info={loraInfoOf(lora.file)} label={lora.name} enabled file={lora.file} />
                                     </li>
                                   ))}
                                 </ul>

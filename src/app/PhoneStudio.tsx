@@ -96,19 +96,6 @@ export function PhoneShell({ view, galleryBody, canUseNegativePrompt, comfyOffli
 
   const { pending, progress, label: runningLabel } = runningSummary(gallery, runningCount);
 
-  // Finished runs use the shared compact notification, including swipe to dismiss.
-  const pendingJobs = React.useRef<Set<string>>(new Set());
-  React.useEffect(() => {
-    const nowPending = new Set(pending.map((item) => item.jobId || item.id));
-    const landed = gallery.find((item) => item.status === 'done' && pendingJobs.current.has(item.jobId || item.id) && !nowPending.has(item.jobId || item.id));
-    pendingJobs.current = nowPending;
-    if (!landed) return;
-    if (!createOpen && !active) showToast(landed.type === 'video' ? 'Video ready' : 'Image ready', 'success', {
-      duration: 5500,
-      group: 'phone-generation-ready',
-      action: { label: 'View', onClick: () => openItem(landed) }
-    });
-  }, [gallery]); // eslint-disable-line react-hooks/exhaustive-deps
   const [moreOpen, setMoreOpen] = React.useState(false);
   // What's running: a tap shows it, or stops it all.
   const [runningOpen, setRunningOpen] = React.useState(false);
