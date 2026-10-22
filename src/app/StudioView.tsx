@@ -382,6 +382,22 @@ export function StudioView({ view }: { view: StudioViewModel }) {
   useNeighborPrefetch(active || null, view.viewerGallery);
   // On a phone Details covers the video, so it pauses until Details closes (mediaCover.ts).
   React.useEffect(() => (phone && showDetails && active?.type === "video" ? coverMedia() : undefined), [phone, showDetails, active?.id, active?.type]);
+  // On the phone a swipe down on Details, from the top of their scroll, closes them (up opened them).
+  const detailsSwipeStart = React.useRef<{ y: number; t: number } | null>(null);
+  const detailsSwipe = {
+    onTouchStart: (event: React.TouchEvent<HTMLElement>) => {
+      const body = event.currentTarget.querySelector<HTMLElement>(".viewer-side-body");
+      detailsSwipeStart.current = event.touches.length === 1 && !(body && body.scrollTop > 0) ? { y: event.touches[0].clientY, t: Date.now() } : null;
+    },
+    onTouchEnd: (event: React.TouchEvent<HTMLElement>) => {
+      const start = detailsSwipeStart.current;
+      detailsSwipeStart.current = null;
+      const touch = event.changedTouches[0];
+      if (!start || !touch) return;
+      const dy = touch.clientY - start.y;
+      if (dy > 90 || (dy > 30 && dy / Math.max(1, Date.now() - start.t) > 0.45)) setShowDetails(false);
+    },
+  };
   // A different image has its own comparison, so never carry the mode over.
   React.useEffect(() => { setCompareOpen(false); }, [active?.id]);
   const viewerWheelRef = useWheelRef<HTMLElement>(wheelViewer);
@@ -735,7 +751,7 @@ export function StudioView({ view }: { view: StudioViewModel }) {
                   </>
                 ) : null}
                 {showDetails ? (
-                  <aside translate="no" data-open-surface className="viewer-side" onWheel={(event) => event.stopPropagation()}>
+                  <aside translate="no" data-open-surface className="viewer-side" onWheel={(event) => event.stopPropagation()} {...(phone ? detailsSwipe : {})}>
                     <div className="viewer-side-head">
                       <h3>Details</h3>
                       {/* The desktop panel closes itself, as it covers the corner Info sits in; on the phone Info (pressed) closes it, so there is one close. */}
