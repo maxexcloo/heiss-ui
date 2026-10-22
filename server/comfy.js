@@ -247,7 +247,16 @@ export async function comfy(pathname, options = {}) {
   init.signal = init.signal ? AbortSignal.any([init.signal, limit]) : limit;
   let response;
   try {
-    response = await fetch(`${activeComfyUrl()}${pathname}`, init);
+    try {
+      response = await fetch(`${activeComfyUrl()}${pathname}`, init);
+    } catch (error) {
+      // A dropped connection ("fetch failed") on a read is tried once more before ComfyUI counts as gone:
+      // the link to a remote worker blips, and one lost GET shouldn't fail a run or a chat's request.
+      const method = String(init.method || "GET").toUpperCase();
+      if (method !== "GET" || init.signal.aborted || isComfyTimeout(error) || error?.noWorker || error?.name !== "TypeError") throw error;
+      await new Promise((resolve) => setTimeout(resolve, 250));
+      response = await fetch(`${activeComfyUrl()}${pathname}`, init);
+    }
   } catch (error) {
     // A busy worker that is slow to answer still counts as there; only a refusal marks it offline for routing.
     if (!isComfyTimeout(error) && !error?.noWorker) noteWorkerReachable(currentComfyBackend(), false);

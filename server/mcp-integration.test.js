@@ -34,7 +34,7 @@ const loraInfo = {
 };
 const videoProfile = { ...imageProfile, id: 'fixture-video', kind: 'video', label: 'Fixture Video', family: 'minimax_h3', model: 'fixture-video', workflow: 'fixture-video', defaults: { width: 1280, height: 720, count: 1, steps: 12 }, mediaInputs: [] };
 
-async function fixture(t, { foregroundWaitSeconds, imageWaitSeconds = 0, environment: extra = {}, dataDir: existingDir, enabled = true, accountMode = false, authenticateAccountToken = () => null, authenticateGatewayIdentity, noteGatewayIdentity, internalCredential, resolveSignedResult, gatewayAdminTools, claimHandover, controlReply = () => ({ runtimes: {}, signature: 'fixture-preview', id: 'fixture-operation', state: 'running' }), writerReply } = {}) {
+async function fixture(t, { foregroundWaitSeconds, imageWaitSeconds = 0, generateDedupeMs = 0, environment: extra = {}, dataDir: existingDir, enabled = true, accountMode = false, authenticateAccountToken = () => null, authenticateGatewayIdentity, noteGatewayIdentity, internalCredential, resolveSignedResult, gatewayAdminTools, claimHandover, controlReply = () => ({ runtimes: {}, signature: 'fixture-preview', id: 'fixture-operation', state: 'running' }), writerReply } = {}) {
   const dataDir = existingDir || fs.mkdtempSync(path.join(os.tmpdir(), 'studio-native-mcp-'));
   const app = express();
   app.use(express.json({ limit: '30mb' }));
@@ -95,6 +95,7 @@ async function fixture(t, { foregroundWaitSeconds, imageWaitSeconds = 0, environ
     authenticateAccountToken,
     // Most tests check the queued response; inline waits have their own tests.
     imageWaitSeconds,
+    generateDedupeMs,
     ...(foregroundWaitSeconds !== undefined ? { foregroundWaitSeconds } : {}),
     ...(authenticateGatewayIdentity ? { authenticateGatewayIdentity } : {}),
     ...(noteGatewayIdentity ? { noteGatewayIdentity } : {}),
@@ -277,7 +278,7 @@ test('tool lists, schemas and instructions are identical for every caller and ca
   for (const user of ['alice', 'bob', '']) assert.equal(await snapshot(await f.client(user)), first, user || 'native');
   assert.doesNotMatch(first, /\d{4}-\d{2}-\d{2}|fixture-(?:image|video)|Fixture/, 'no dates or catalogue entries in the prefix');
   // Images wait long enough for a cold model load, so they usually return inline.
-  assert.equal(generateWaitSeconds, 60);
+  assert.equal(generateWaitSeconds, 30);
 });
 
 test('native MCP is absent without credentials and refuses missing or incorrect authentication', async t => {
@@ -2288,4 +2289,15 @@ test('Reuse carries how a result’s prompt was written into a plain run again, 
   assert.equal(f.submitted.at(-1).assistant, undefined);
   data(await call(client, 'Reuse', { job_id: 'result 1', kind: 'image', request: 'warmer' }));
   assert.equal(f.submitted.at(-1).assistant, undefined);
+});
+
+test('a repeated identical Generate within the minute is one request: the same jobs, nothing queued twice', async t => {
+  const f = await fixture(t, { generateDedupeMs: 60_000 });
+  const client = await f.client();
+  const args = { profile_id: imageProfile.id, prompts: ['A lighthouse'], count: 1 };
+  const [first, second] = await Promise.all([call(client, 'Generate', args), call(client, 'Generate', args)]);
+  assert.equal(f.submitted.length, 1);
+  assert.deepEqual(data(second).jobs.map(job => job.job_id), data(first).jobs.map(job => job.job_id));
+  await call(client, 'Generate', { ...args, prompts: ['A harbour'] });
+  assert.equal(f.submitted.length, 2);
 });
