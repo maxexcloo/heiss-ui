@@ -158,25 +158,27 @@ export function PhoneShell({ view, galleryBody, canUseNegativePrompt, comfyOffli
       {/* Every message, app-wide, at the top of the screen; the bar's row steps aside while one shows. */}
       <PhoneStatus message={message} />
       {/* One top bar (UI-PATTERNS › Phone): iOS's status bar sits over it, and a tap there scrolls the page to the top.
-          Selecting swaps its contents (Close · n Selected · Failed · All) rather than bringing in a second bar. */}
+          Selecting swaps its contents (n Selected · All · Failed · In Progress · Close) rather than bringing in a second bar. */}
       <header ref={barRef} className={cn('phone-bar', selecting && 'is-selecting')}>
         {selecting ? (
           <div className={cn('phone-bar-row', message && 'has-message')}>
-            <button type="button" className="phone-icon" aria-label="Stop Selecting" onClick={selection.end}><X size={22} /></button>
             <span className="phone-bar-title">{selectedItems.length ? `${selectedItems.length} Selected` : 'Select Items'}</span>
             <span className="phone-bar-gap" />
             <button type="button" className={cn('phone-icon', selection.allSelected && 'is-on')} aria-pressed={selection.allSelected} aria-label={selection.allSelected ? 'Select None' : 'Select All'} title={selection.allSelected ? 'Select None' : 'Select All'} disabled={!selection.selectable.some((item) => item.status !== 'pending')} onClick={selection.toggleAll}><CheckSquare size={20} /></button>
             <button type="button" className="phone-icon" aria-label="Select Failed" title="Select Failed" disabled={!selection.failedCount} onClick={selection.selectFailed}><AlertTriangle size={20} /></button>
             <button type="button" className="phone-icon" aria-label="Select In Progress" title="Select In Progress" disabled={!selection.runningCount} onClick={selection.selectRunning}><LoaderCircle size={20} /></button>
+            {/* Close on the right, as on every phone surface. */}
+            <button type="button" className="phone-icon" aria-label="Stop Selecting" onClick={selection.end}><X size={22} /></button>
           </div>
         ) : (
           <div className={cn('phone-bar-row', message && 'has-message')}>
-            {/* Left: the status light (or running jobs) and "Studio" on one line. */}
+            {/* Left, on one line: the status light, "Studio", then while anything runs its spinner and count. */}
             <div className={cn('phone-heading', restarting ? 'is-restarting' : connected ? 'is-connected' : comfyStatus?.checked ? 'is-offline' : 'is-checking')}>
+              <button type="button" className="phone-heading-light" aria-label={`${statusText}. Check Again`} title={statusText} onClick={retryComfyStatus}><span /></button>
+              <span className="phone-heading-name">Studio</span>
               {runningCount ? <button type="button" className="phone-running-inline" aria-label={runningLabel} aria-haspopup="menu" aria-expanded={runningOpen} title={runningLabel} onClick={() => setRunningOpen((value) => !value)}>
                 <LoaderCircle size={14} className="spin" aria-hidden="true" /><span>{runningCount}</span>
-              </button> : <button type="button" className="phone-heading-light" aria-label={`${statusText}. Check Again`} title={statusText} onClick={retryComfyStatus}><span /></button>}
-              <span className="phone-heading-name">Studio</span>
+              </button> : null}
             </div>
             <span className="phone-bar-gap" />
             {/* No Select button on the phone: a long press on a tile starts selecting. */}

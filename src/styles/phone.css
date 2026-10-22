@@ -1117,10 +1117,10 @@ html:has(.phone-status .status-message) .scrim .viewer-stage:has(.viewer-phone-b
 .text-focus-field.is-text-focused .profile-editor-text { flex: 1 1 auto; height: auto; min-height: 0; }
 /* While a field is focused nothing else shows, not even the page's bars under the sheet. */
 html:has(.is-text-focused) :is(.phone-prompt-bar, .phone-bar) { visibility: hidden; }
-/* "Studio" and the status light share one line, centred on the bar; the tools keep the right edge. */
+/* The status light, "Studio" and the running spinner share one line, centred on the bar; the tools keep the right edge. */
 .phone-heading { flex: none; height: var(--bar-h); }
 .phone-heading-name { line-height: 1; }
-.phone-heading .phone-running-inline { width: 32px; min-width: 32px; margin-left: -4px; padding: 0; gap: var(--space-1); font-size: 10px; }
+.phone-heading .phone-running-inline { min-width: 32px; margin-left: 0; padding: 0 4px; gap: var(--space-1); font-size: 12px; }
 @media (max-width: 379px) {
   .phone-heading-name { display: none; }
 }
