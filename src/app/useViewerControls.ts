@@ -271,7 +271,7 @@ export function useViewerControls(view: any) {
 
   /** What the viewer steps through: the gallery in the order it is laid out (useStudio.ts viewerGallery). */
   function viewerItems(): GalleryItem[] {
-    return view.viewerGallery || visibleGallery.filter((item: GalleryItem) => item.status === "pending" || item.status === "done" || item.status === "error");
+    return view.viewerGallery || visibleGallery.filter((item: GalleryItem) => item.status === "pending" || item.status === "done" || item.status === "error" || item.status === "canceled");
   }
 
   function moveViewer(direction: 1 | -1) {
