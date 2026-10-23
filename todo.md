@@ -1,12 +1,13 @@
 # Rewrite Backlog
 
-Work on `rewrite/mantine` within the requested 12-hour implementation budget. Keep the live application unchanged and pause for review before merging. Prioritise working, verified workflows; fixtures do not establish live generation or migration readiness.
+Work on `rewrite/mantine` within the requested 12-hour implementation budget. Keep the rewrite undeployed and pause for review before merging. Prioritise working, verified workflows; fixtures do not establish live generation or migration readiness.
 
 ## Current Work
 
 - [ ] Complete the full check, build, browser and container verification after integration; commit coherent outcomes and leave the preview running.
 - [ ] Profile actual interaction long tasks/frame intervals on representative GPU hardware; retain reduced-motion and shared animation-speed controls.
 - [ ] Continue source and browser comparison for flow, focus, spacing and motion using the published legacy image with isolated sample data. Fresh authenticated legacy visual review remains blocked by the credential guard.
+- [ ] Rebuild the worker image with non-blocking provider discovery and verify its packaged runtime. The live incident fixes for terminal progress and stale recovery are also retained in the rewrite.
 
 ## Required Before Cutover
 
@@ -14,7 +15,7 @@ Work on `rewrite/mantine` within the requested 12-hour implementation budget. Ke
       Live image generation and reference-based Fibo refinement are verified with saved results. Cloud is offline and the user has asked to omit live cloud checks for now. GPU video is offline. Browser fixtures cover the complete session workflow on desktop, phone Chromium and phone WebKit.
 - [ ] Verify administrator/user isolation, Cloud Models and NSFW grants with real accounts, including OIDC and old result links.
 - [ ] Rehearse migration and restoration on a protected copy of actual runtime state; report mappings/conflicts and verify media/result links and account ownership.
-      A stable read-only capture of 135 live metadata files passed local dry run, SQLite apply, repeated-apply protection and byte-exact restoration: 2 accounts, 7,082 gallery records, 19 deletion markers, zero conflicts or unmatched gallery owners. All three account folders were retained. The rewrite reads all 36 profiles, their version history, 10 guide packs and 140 catalogue entries without changing their definitions. Retain deployment-owned `STUDIO_MODEL_MANIFEST_PREFIX` when moving the catalogue. Media bytes, signed-link replay and authenticated account behaviour still need verification.
+      A stable read-only capture of 135 live metadata files passed local dry run, SQLite apply, repeated-apply protection and byte-exact restoration: 2 accounts, 7,082 gallery records, 19 deletion markers, zero conflicts or unmatched gallery owners. All three account folders were retained. The rewrite reads all 36 profiles, their version history, 10 guide packs and 140 catalogue entries without changing their definitions. Legacy and rewrite readers also agree on 1,176 stored result links, 1,568 job owners and 1,094 result numbers, including audience restrictions and legacy sealed tokens. Retain deployment-owned `STUDIO_MODEL_MANIFEST_PREFIX` when moving the catalogue. Media bytes, HTTP result-link delivery and authenticated account behaviour still need verification.
 - [ ] Verify the app and worker images, GPU lease exclusion, offline/startup failures, cancellation/retry, restart recovery and safe saved-output workload switching.
       Both images build locally; the AMD64 app passes read-only runtime, SQLite and Sharp smoke checks, and the packaged worker passes CPU-only lease/loader/bridge checks. GPU runtime switching remains fixture-verified.
 - [ ] After publishing the verified worker image, update ai's workload image references and retire the old worker recipe from images together. Existing image consumers and the images checkout remain unchanged during this review.
