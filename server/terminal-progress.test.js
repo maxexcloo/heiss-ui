@@ -15,7 +15,7 @@ process.env.COMFY_OUTPUT_DIR = "";
 const nativeFetch = globalThis.fetch;
 const NativeWebSocket = globalThis.WebSocket;
 const sockets = new Map();
-globalThis.WebSocket = class extends NativeWebSocket {
+if (NativeWebSocket) globalThis.WebSocket = class extends NativeWebSocket {
   constructor(url) {
     super(url);
     sockets.set(new URL(url).searchParams.get("clientId"), this);
@@ -54,7 +54,7 @@ async function message(id, event) {
   await received;
 }
 
-test("saved results stay terminal when late progress and errors arrive before worker cleanup closes the socket", async () => {
+test("saved results stay terminal when late progress and errors arrive before worker cleanup closes the socket", { skip: !NativeWebSocket }, async () => {
   const id = "terminal-late-progress";
   const body = {
     kind: "image", family: "sdxl", variant: "standard", source: "checkpoint", workflow: "family:sdxl",
