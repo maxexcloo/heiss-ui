@@ -7,7 +7,6 @@ Work on `rewrite/mantine` within the requested 12-hour implementation budget. Ke
 - [ ] Complete the full check, build, browser and container verification after integration; commit coherent outcomes and leave the preview running.
 - [ ] Profile actual interaction long tasks/frame intervals on representative GPU hardware; retain reduced-motion and shared animation-speed controls.
 - [ ] Continue source and browser comparison for flow, focus, spacing and motion; a fresh authenticated legacy visual review remains blocked by the credential guard.
-- [ ] Review custom-workflow control mapping: importing/running is retained, but editing mappings currently requires raw JSON instead of the old visual controls.
 
 ## Required Before Cutover
 
