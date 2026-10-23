@@ -8,6 +8,10 @@ Work on `rewrite/mantine` within the requested 12-hour implementation budget. Ke
 - [x] Replace the legacy frontend with React, Mantine, declarative React Router and TanStack Query.
 - [x] Use Image, Video and Chat tabs; keep the gallery composer at the bottom, expanding upwards; present media iterations with side sessions in Chat.
 - [x] Group models Family → Model or Finetune → Fast/Quality or workflow preset. Group LoRAs Family → Type.
+- [x] Add a header Full Width / Fixed Width toggle and a MantineHub playground-style theme popover for colour, radius and Light / Dark / System mode. Default to System and persist preferences.
+- [x] Make the resting composer compact: any click inside expands it and clicking outside collapses it. Reference opens a gallery/upload picker, and gallery items can be dragged into the composer as references.
+- [x] Open Library and Settings as modal workspaces, use blurred backdrops and transitions for modals, and restore a full-screen media viewer.
+- [x] Add conversational Chat with streamed assistant text, automatic generation when requested, and a new editable generation-input card followed by results for each timeline iteration. Keep Images Gallery as the landing page.
 - [x] Add owner-scoped SQLite sessions, queue and user presets; retain published generation validation and idempotency.
 - [x] Preserve selected backend IDs, recover recorded jobs without scanning shared history, and hold workload admission through durable output saving.
 - [x] Package media/text worker modes, fixed GPU leases, Docker admission and direct authenticated text-stream admission. Lifecycle control remains disabled.
@@ -17,9 +21,10 @@ Work on `rewrite/mantine` within the requested 12-hour implementation budget. Ke
 - [x] Remove the old UI, obsolete assets/dependencies, handwritten declaration companions, completed TASKS history and redundant development/release setup.
 - [x] Complete direct CLIProxyAPI media generation independent of the ComfyUI GPU worker, including provider recovery and output saving; HTTP fixtures cover actual account permissions and PNG metadata reuse.
 - [x] Replace loopback HTTP for core MCP generation/status/result lookup with shared in-process domain calls; retain published tool contracts.
-- [ ] Finish desktop/phone visual review and browser acceptance for the clarified fluid gallery and iterative Chat layout.
+- [x] Verify desktop/phone browser acceptance for the clarified fluid gallery and iterative Chat layout: 51 Chromium/WebKit scenarios pass. Final actual-preview visual review continues.
 - [ ] Complete the full check, build, browser and container verification after integration; commit coherent outcomes and leave the preview running.
-- [ ] Move retained upscales into the durable queue, including recovery of recorded provider IDs and saving before admission release.
+- [x] Move retained upscales into the durable queue, including recovery of recorded provider IDs and saving before admission release. A real 1024 → 2048 upscale saved and downloaded successfully.
+- [ ] Support cold startup with all workers offline: expose configured logical profiles, accept owned work and wait for the selected worker without substituting models.
 
 ## Required Before Cutover
 
@@ -36,7 +41,7 @@ Work on `rewrite/mantine` within the requested 12-hour implementation budget. Ke
 ## Deferred Decisions & Work
 
 - In-app editing, draft approval and synchronisation of ai definitions remain deferred. Library file imports must not edit mounted definitions.
-- General conversational text chat remains deferred unless requested; Chat currently means media-focused iterative generation with inputs and sessions.
+- Chat now includes text conversation and requested media generation; the user explicitly replaced the earlier general-chat deferral. Cloud remains outside live verification while offline.
 - Queue pause/reordering and Kubernetes runtime control are deferred.
 - Remaining legacy API/domain internals can be removed or converted to TypeScript as their replacements become verified; retain only live-data and external-contract compatibility.
 - GitHub fork-network changes and other sessions' branches/worktrees remain outside this rewrite.
