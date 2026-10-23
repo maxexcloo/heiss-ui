@@ -7,7 +7,7 @@ Work on `rewrite/mantine` within the requested 12-hour implementation budget. Ke
 - [ ] Complete the full check, build, browser and container verification after integration; commit coherent outcomes and leave the preview running.
 - [ ] Profile actual interaction long tasks/frame intervals on representative GPU hardware; retain reduced-motion and shared animation-speed controls.
 - [ ] Continue source and browser comparison for flow, focus, spacing and motion using the published legacy image with isolated sample data. Fresh authenticated legacy visual review remains blocked by the credential guard.
-- [ ] Rebuild the worker image with non-blocking provider discovery and verify its packaged runtime. The live incident fixes for terminal progress and stale recovery are also retained in the rewrite.
+- [ ] Fix two pre-existing keyboard gaps: Escape in the reference picker's nested Slot select or filter popovers closes the whole picker, and focus drops to the page after Move LoRA Earlier/Later.
 
 ## Required Before Cutover
 
@@ -17,7 +17,7 @@ Work on `rewrite/mantine` within the requested 12-hour implementation budget. Ke
 - [ ] Rehearse migration and restoration on a protected copy of actual runtime state; report mappings/conflicts and verify media/result links and account ownership.
       A stable read-only capture of 135 live metadata files passed local dry run, SQLite apply, repeated-apply protection and byte-exact restoration: 2 accounts, 7,082 gallery records, 19 deletion markers, zero conflicts or unmatched gallery owners. All three account folders were retained. The rewrite reads all 36 profiles, their version history, 10 guide packs and 140 catalogue entries without changing their definitions. Legacy and rewrite readers also agree on 1,176 stored result links, 1,568 job owners and 1,094 result numbers, including audience restrictions and legacy sealed tokens. Retain deployment-owned `STUDIO_MODEL_MANIFEST_PREFIX` when moving the catalogue. Media bytes, HTTP result-link delivery and authenticated account behaviour still need verification.
 - [ ] Verify the app and worker images, GPU lease exclusion, offline/startup failures, cancellation/retry, restart recovery and safe saved-output workload switching.
-      Both images build locally; the AMD64 app passes read-only runtime, SQLite and Sharp smoke checks, and the packaged worker passes CPU-only lease/loader/bridge checks. GPU runtime switching remains fixture-verified.
+      Both images build locally; the AMD64 app passes read-only runtime, SQLite and Sharp smoke checks. The AMD64 worker, including non-blocking provider discovery, passes 84 packaged CPU lease/loader/bridge fixtures. GPU inference and runtime switching remain unverified.
 - [ ] After publishing the verified worker image, update ai's workload image references and retire the old worker recipe from images together. Existing image consumers and the images checkout remain unchanged during this review.
 - [ ] Confirm AI Control relinquishes runtime ownership and every managed local text caller uses Studio admission before enabling automatic control.
 - [ ] Verify stream draining and independent GPU/cloud work with real services. Live authenticated Bifrost ai/text discussion completed in 9.081 seconds with 1556 characters and no media jobs. Managed Radiance stream draining still needs live verification; LiteLLM → Bifrost migration is separate.
