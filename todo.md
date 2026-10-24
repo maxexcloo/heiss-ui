@@ -7,7 +7,7 @@ Bring `rewrite/mantine` beyond legacy Studio: a clean, Grok Imagine-like media w
 ## Working Rules
 
 - Follow `AGENTS.md` and `UI-PATTERNS.md`; its Code Structure section holds the implementation conventions. Compare behaviour against legacy (`/private/tmp/studio-legacy-60vrohc3`, sample instance `http://127.0.0.1:18990`), not just feature lists.
-- Work top to bottom: Foundations (F), Redesign (R), MCP (M), Dream (D), Tests & Repository (T). One owner per file; serialise `mise run check`, builds and full browser runs.
+- Work top to bottom: Foundations (F), Redesign (R), MCP (M), AI Control (A), Dream (D), Intelligence (I), Tests & Repository (T). One owner per file; serialise `mise run check`, builds and full browser runs.
 - One outcome per commit on `rewrite/mantine`, pushed after its focused checks pass. Rebuild `dist/` before browser runs; Playwright serves the build.
 - Items marked **(Q)** wait on Questions for Max. Do not implement them, do not stop for them: continue with the next item.
 - New questions go in Questions for Max with a recommendation; finished items are checked off with a short evidence note.
@@ -51,6 +51,10 @@ The MCP tools use a lot of context and iterations often call tools wrongly. The 
 - [ ] M3 Make iteration hard to get wrong: one iterate tool taking a result ID and changes; validation errors that say the correct call; examples in descriptions only where they prevent observed mistakes. Check trigger words are added to prompts; Generate defaults to one image, accepts at most 10 queued jobs, returns links for slow work and never polls or resubmits unless asked. Check Status keeps reporting long (~19 min) video jobs.
 - [ ] M5 LibreChat: kubelab PR #253 (merged and live) raised the Studio spec context to 160,000 tokens, the smallest single-GPU window, and kept only the tool-naming prefix. A dynamic context would need LibreChat to read context lengths from the gateway's model list; check whether this LibreChat version can. Reasoning effort is unverified: confirm which parameter the text runtime honours with one live request before setting it. Then backport M2/M3 to production as a `main` hotfix on the current release (production moved to 0.51.0 on 24 Oct).
 - [ ] M6 Queue priority: MCP-originated (external chat) jobs run after queued manual Studio requests (gallery, viewer, Studio Chat) on the same resource, FIFO within priority, MCP sets kept contiguous, never pre-empting started work; Dream later sits below both. Backport to production with the MCP hotfix.
+- [ ] M7 Multi-model runs return one labelled comparison page (all profiles side by side) instead of one link per set; it reuses R10 Compare runs.
+- [ ] M8 Load-aware ordering: fan-out sets run currently loaded models first to minimise GPU switches; replies give an ETA per set.
+- [ ] M9 Auto model pick: without a named model, Studio chooses suitable profiles from the prompt and the taste profile and explains the choice in one line.
+- [ ] M10 Result on request returns one contact-sheet image per run instead of per-image previews.
 - [ ] M4 Chat uses the same slimmed tools and taste profile; eval with `mise run eval:assistant`.
 
 ## AI Control in Studio (A) — Large, after M
@@ -63,6 +67,14 @@ The MCP tools use a lot of context and iterations often call tools wrongly. The 
 - [ ] D2 Dream scheduler: idle-only, yields to user and text work, unseen buffer and daily cap; images, videos and NSFW-granted spicy content; separate pool until kept.
 - [ ] D3 `/dream` deck: swipe left discard, right keep, up keep + variations; Star and Animate buttons; pause and settings; discards retained and filterable.
 - [ ] D4 Suggestions: composer prompt ideas, viewer next-step chips and Chat context from the taste profile.
+
+## Intelligence & Finishing (I) — Medium, after D1
+
+- [ ] I1 Semantic search: background captions from the text model (idle-only) so gallery search matches what an image shows, not only its prompt.
+- [ ] I2 Prompt templates from starred results, with slots (subject, setting, style), usable from the composer chips and Chat.
+- [ ] I3 Model stats per profile: timing, failure and star rates, shown in Library and used to pick defaults and flag broken models.
+- [ ] I4 Optional auto finishing on Star: queue upscale/face detail in idle GPU time.
+- [ ] I5 Installable phone app: PWA manifest, icons and share target so images shared to Studio become references.
 
 ## Later (L)
 
