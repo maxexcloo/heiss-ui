@@ -62,8 +62,8 @@ The MCP tools use a lot of context and iterations often call tools wrongly. The 
 ## Tests & Repository (T) — Small
 
 - [ ] T1 Split `tests/browser/workflows.spec.ts` into its topic specs, keeping only cross-feature journeys; share route mocks through `fixtures.ts`.
-- [ ] T2 Add a Mise task for browser tests and use it in README; remove `dev:lan`; align `package.json` ranges; delete empty scaffold directories.
-- [ ] T3 Deduplicate README/CONTRIBUTING development steps and TROUBLESHOOTING/DOCKER rollback text.
+- [x] T2 Add a Mise task for browser tests and use it in README; remove `dev:lan`; align `package.json` ranges; delete empty scaffold directories.
+- [x] T3 Deduplicate README/CONTRIBUTING development steps and TROUBLESHOOTING/DOCKER rollback text.
 - [ ] T4 Stop writing `startImageId` in new drafts once `referenceAssets` covers every reader; keep reading it for old records.
 - [ ] T5 Drop `export` from symbols used only in their own file.
 
