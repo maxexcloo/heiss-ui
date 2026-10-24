@@ -11,6 +11,9 @@ version opens with a `> ` summary line.
 
 ## [Unreleased]
 
+### Added
+- **Radiance node:** an optional `rebalance` input sends Krea 2's ConditioningKrea2Rebalance to Radiance 1.11 or later.
+
 ## [0.48.2] - 2026-10-23
 
 > Saved results stay complete while worker cleanup finishes
