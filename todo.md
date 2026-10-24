@@ -50,7 +50,7 @@ The MCP tools use a lot of context and iterations often call tools wrongly. The 
 - [ ] M2 Slim tool surface: fewer, clearer tools; short descriptions; compact schemas with enums/defaults; concise results that reference IDs instead of repeating inputs.
 - [ ] M3 Make iteration hard to get wrong: one iterate tool taking a result ID and changes; validation errors that say the correct call; examples in descriptions only where they prevent observed mistakes. Check trigger words are added to prompts; Generate defaults to one image, accepts at most 10 queued jobs, returns links for slow work and never polls or resubmits unless asked. Check Status keeps reporting long (~19 min) video jobs.
 - [ ] M5 LibreChat: kubelab PR #253 (merged and live) raised the Studio spec context to 160,000 tokens, the smallest single-GPU window, and kept only the tool-naming prefix. A dynamic context would need LibreChat to read context lengths from the gateway's model list; check whether this LibreChat version can. Reasoning effort is unverified: confirm which parameter the text runtime honours with one live request before setting it. Then backport M2/M3 to production as a `main` hotfix on the current release (production moved to 0.51.0 on 24 Oct).
-- [ ] M6 Queue priority: done in the rewrite (MCP jobs after manual Studio requests, FIFO within priority, started MCP sets kept together, persisted across restarts). Production (`main`) has no Studio queue, so its backport needs a separate change (Question 1).
+- [x] M6 Queue priority: MCP jobs run after manual Studio requests, FIFO within priority, started MCP sets kept together, persisted across restarts. Rewrite only; production gets it at cutover.
 - [ ] M7 Multi-model runs return one labelled comparison page (all profiles side by side) instead of one link per set; it reuses R10 Compare runs.
 - [ ] M8 Load-aware ordering: fan-out sets run currently loaded models first to minimise GPU switches; replies give an ETA per set.
 - [ ] M9 Auto model pick: without a named model, Studio chooses suitable profiles from the prompt and the taste profile and explains the choice in one line.
@@ -98,7 +98,7 @@ The MCP tools use a lot of context and iterations often call tools wrongly. The 
 
 ## Questions for Max
 
-1. Production chat priority: `main` sends work straight to ComfyUI's queue. Either insert manual prompts at the front (simple, but can split a running chat set and switch models mid-set), or hold MCP prompts back while manual work waits (keeps sets together, more code). Recommended: hold back, since it matches the rewrite's behaviour.
+None open.
 
 Settled 24 Oct (later): no generation toasts; AI Control folds into Studio; no Renovate auto-merge for Studio images; both Kroma Turbo and H3 Singularity are NSFW; LibreChat config ships first, then the MCP backport. LibreChat leak review (read-only) found no cross-user files or result links; result links stay owner-checked bearer links; the second LibreChat user stays a Studio administrator; kubelab PR #254 limits Studio MCP to LibreChat's Bifrost key (awaiting merge).
 
