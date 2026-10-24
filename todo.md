@@ -55,10 +55,11 @@ The MCP tools use a lot of context and iterations often call tools wrongly. The 
 - [ ] M5 LibreChat: kubelab PR #253 (merged and live) raised the Studio spec context to 160,000 tokens, the smallest single-GPU window, and kept only the tool-naming prefix. A dynamic context would need LibreChat to read context lengths from the gateway's model list; check whether this LibreChat version can. Reasoning effort is unverified: confirm which parameter the text runtime honours with one live request before setting it.
 - [x] M6 Queue priority: MCP jobs run after manual Studio requests, FIFO within priority, started MCP sets kept together, persisted across restarts. Rewrite only; production gets it at cutover.
 - [ ] M7 Multi-model runs return one labelled comparison page (all profiles side by side) instead of one link per set; it reuses R10 Compare runs.
-- [ ] M8 Load-aware ordering: fan-out sets run currently loaded models first to minimise GPU switches; replies give an ETA per set.
+- [ ] M8 Load-aware ordering keyed on model and LoRA set: run sets that reuse the loaded model and LoRAs first to cut setup (live: setup is 19% of GPU time; LoRA changes cost ~4.6 s on 38% of runs, model switches ~9 s on 11%); replies give an ETA per set.
 - [ ] M9 Auto model pick: without a named model, Studio chooses suitable profiles from the prompt and the taste profile and explains the choice in one line.
 - [ ] M10 Result on request returns one contact-sheet image per run instead of per-image previews.
 - [x] M11 MCP never upscales (or adds face detail) unless the user explicitly asks; quality tiers and words like "best" don't imply it.
+- [ ] M12 ETA-gated waits: Generate waits inline only when the generation-timing ETA says the job will finish within the wait; otherwise it returns links at once (live: the 30 s wait returned an image for ~7% of outputs while blocking turns ~31 s).
 - [ ] M4 Chat uses the same slimmed tools and taste profile; eval with `mise run eval:assistant`.
 
 ## AI Control in Studio (A) — Large, after M
