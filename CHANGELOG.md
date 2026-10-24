@@ -11,6 +11,8 @@ version opens with a `> ` summary line.
 
 ## [Unreleased]
 
+> Krea 2 rebalance for Radiance image generation
+
 ### Added
 - **Radiance node:** an optional `rebalance` input sends Krea 2's ConditioningKrea2Rebalance to Radiance 1.11 or later.
 
