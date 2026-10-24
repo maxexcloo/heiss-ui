@@ -46,7 +46,7 @@ Follow the updated `UI-PATTERNS.md`; target a clean Grok Imagine-like flow. Fold
 
 The MCP tools use a lot of context and iterations often call tools wrongly. The same backend serves Chat.
 
-- [x] M1 Measured in fixtures: instructions 1,227 chars and 9 tools at 8.4k chars are modest; the cost is in results (1024px inline preview per output plus full settings records) and confusing schemas (27 Generate parameters, limits that contradict descriptions, multi-mode Reuse). Reviewing real LibreChat traces needs a read of production chat data, which the permission guard blocked (Question 3).
+- [x] M1 Measured: the prefix (instructions 1,227 chars, 9 tools at 8.4k chars) is modest. Real LibreChat use (30 conversations, 1,069 Studio calls) shows iterations rebuilding full Generate calls instead of Reuse (2 uses), Models lookups up to ~15k chars each (146 calls), Result/background-task polling (83 back-to-back Result calls, 349 background polls) and 52 erroring calls. Inline 1024px previews and full settings records add further cost.
 - [ ] M2 Slim tool surface: fewer, clearer tools; short descriptions; compact schemas with enums/defaults; concise results that reference IDs instead of repeating inputs.
 - [ ] M3 Make iteration hard to get wrong: one iterate tool taking a result ID and changes; validation errors that say the correct call; examples in descriptions only where they prevent observed mistakes.
 - [ ] M5 After M2/M3 land, open a kubelab PR: remove the Studio spec `promptPrefix`, lower reasoning effort for the Studio spec and raise `maxContextTokens` to the `ai/text` model's maximum. Do not merge it without review.
