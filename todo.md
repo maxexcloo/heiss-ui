@@ -31,7 +31,7 @@ Shared owners first, so later work reuses them instead of adding copies. Audit e
 
 Follow the updated `UI-PATTERNS.md`; target a clean Grok Imagine-like flow. Fold the audit fixes into each item. Each item ships with fluid, tasteful motion and is checked in the browser for jank, layout shift and intuitive flow on desktop and phone.
 
-- [ ] R1 Composer: prompt box with history inside it and a chip rail (Profile with readiness, Aspect, Count, References with numbered thumbnails, LoRAs with summary, Presets, Expert popover showing only settings the profile supports; Frames or Duration, not both; fixed seed visible). Image/Video navigates `/images`↔`/video`; Clear resets the operation; one submit label and blocked reason; submit notifies and shows the pending tile. Phones keep the full-height editor with roomy, easy-to-edit text. 2K/4K output where profiles support it. One Steps rule and range from `capabilities.steps` on every surface; references behave identically in video mode without hover flashes.
+- [ ] R1 Composer: prompt box with history inside it and a chip rail (Profile with readiness, Aspect, Count, References with numbered thumbnails, LoRAs with summary, Presets, Expert popover showing only settings the profile supports; Frames or Duration, not both; fixed seed visible). Image/Video navigates `/images`↔`/video`; Clear resets the operation; one submit label and blocked reason; submit shows the pending tile immediately, with no toasts on submit or completion. Phones keep the full-height editor with roomy, easy-to-edit text. 2K/4K output where profiles support it. One Steps rule and range from `capabilities.steps` on every surface; references behave identically in video mode without hover flashes.
 - [ ] R2 Viewer hub: prefilled prompt bar and variation strip; Star, Download/Share, Upscale, Animate ▾ (LLM themes incl. Spicy for NSFW grants and Custom Instruction), Regenerate ▾ (new seed / Exact Repeat), Copy Prompt/Settings; curated details (profile, LoRAs, references, seed/steps, output, timing); remembered desktop sidebar (default open); phone full-bleed with swipe navigate/close/details; neighbour prefetch and position; no overlapping close. Details: Timing as Active, Total, Queue, Setup, Sampling, Finishing (no "Est."); Output as Dimensions, File, Size, Time; LoRAs as name and strength; Copy Settings includes only inputs that were set. Phone double-tap zoom.
 - [ ] R3 Gallery: rework filters (clear, discoverable, quick to apply and reset) and multi-select (entry, range/shift selection, clear bulk bar, exit) until they feel effortless; Grid | Runs toggle with stacked run cards that fan out in place; progress, phase and Cancel on running tiles; failed tiles; selection extras (Select Failed/In Progress, Stop, Share, Delete key, context menu on selection, labelled bulk actions); Shift+F10 menus; tile captions and short accessible names; downloads use `outputName`; Try Again-only paging; poll only while work is active. Loading and failed tiles open the viewer like other tiles; Try Again replaces the failed item; search/filter changes don't replay the gallery load animation and filters open like search; hover caption is prompt then time · profile (videos add duration); phone tiles have no overlay unless Tile Captions is on; show and filter by originating Chat.
 - [ ] R4 Chat: the card editor is the same UI as the gallery generation box (same chip composer) with a Close action; each result's label ("Image · from iteration 1") sits above its image and the card's prompt sits below the assistant's chat text; tune the Chat flow end to end; compact cards with inline Edit (shared editor), edited submissions append at the bottom as one quiet line; Chat noun everywhere; LLM titles and Rename; Delete with unticked per-result checklist (needs store/route); staged Refine/Animate keeps its own input; multi-output grid; phone drawer title; fix duplicate keys and missing-key warning; stop polling when idle. Titles stay New Chat while text is offline (no cloud fallback).
@@ -49,8 +49,12 @@ The MCP tools use a lot of context and iterations often call tools wrongly. The 
 - [x] M1 Measured: the prefix (instructions 1,227 chars, 9 tools at 8.4k chars) is modest. Real LibreChat use (30 conversations, 1,069 Studio calls) shows iterations rebuilding full Generate calls instead of Reuse (2 uses), Models lookups up to ~15k chars each (146 calls), Result/background-task polling (83 back-to-back Result calls, 349 background polls) and 52 erroring calls. Inline 1024px previews and full settings records add further cost.
 - [ ] M2 Slim tool surface: fewer, clearer tools; short descriptions; compact schemas with enums/defaults; concise results that reference IDs instead of repeating inputs.
 - [ ] M3 Make iteration hard to get wrong: one iterate tool taking a result ID and changes; validation errors that say the correct call; examples in descriptions only where they prevent observed mistakes. Check trigger words are added to prompts; Generate defaults to one image, accepts at most 10 queued jobs, returns links for slow work and never polls or resubmits unless asked. Check Status keeps reporting long (~19 min) video jobs.
-- [ ] M5 After M2/M3 land, open a kubelab PR: remove the Studio spec `promptPrefix`, lower reasoning effort for the Studio spec and raise `maxContextTokens` to the `ai/text` model's maximum. Do not merge it without review.
+- [ ] M5 LibreChat: kubelab PR #253 raises the Studio spec context to 160,000 tokens and keeps only the tool-naming prefix (awaiting merge). Reasoning effort is unverified: confirm which parameter the text runtime honours with one live request before setting it. Then backport M2/M3 to production as a `main` hotfix (`v0.48.3`).
 - [ ] M4 Chat uses the same slimmed tools and taste profile; eval with `mise run eval:assistant`.
+
+## AI Control in Studio (A) — Large, after M
+
+- [ ] A1 Fold AI Control into Studio: Studio owns GPU/text workload status, mode, apply/preview, restart and operation tools (its administrator MCP tools and Settings › Workers), replacing the separate AI Control service. Plan the handover with ai/kubelab, keep automatic lifecycle control disabled until Studio is the single owner, and retire AI Control after cutover.
 
 ## Dream & Taste (D) — Large, after R
 
@@ -71,6 +75,7 @@ The MCP tools use a lot of context and iterations often call tools wrongly. The 
 - [ ] T4 Stop writing `startImageId` in new drafts once `referenceAssets` covers every reader; keep reading it for old records.
 - [ ] T5 Drop `export` from symbols used only in their own file.
 - [ ] T6 Align the declared Node minimum with Vite's (20.19/22.12); check whether `private/ui-batch-10-flat-seed-layout.patch` is still needed, then apply or delete it.
+- [ ] T7 Remove single-user LAN access and studio-password routes; single-user local development keeps working.
 
 ## Verification & Delivery
 
@@ -81,6 +86,8 @@ The MCP tools use a lot of context and iterations often call tools wrongly. The 
 ## Questions for Max
 
 None open.
+
+Settled 24 Oct (later): no generation toasts; AI Control folds into Studio; no Renovate auto-merge for Studio images; both Kroma Turbo and H3 Singularity are NSFW; LibreChat config ships first, then the MCP backport.
 
 Settled 24 Oct: viewer hub, chip composer, Grid | Runs, compact Chat cards, Chat noun and LLM titles, unticked delete checklist, legacy-style Library/Settings, glass everywhere via one extractable theme, phone full-height editor, Dream as a fourth mode with idle-only capped generation and an LLM taste profile. Not wanted: gateway-based text readiness, centring the thread on the composer, LoRA recents, Megapixels and per-run Smart Upscale. Also settled: 2K/4K returns; LoRA favourites and strength slider; LoRA and reference pickers redesigned (R8, R9); compare runs feed the taste profile (R10); read-only LibreChat trace review is approved; kubelab drops the duplicate Studio prompt prefix, lowers reasoning effort and uses the model's maximum context window once M2/M3 land; `private/todo.md` is mined into this backlog and then deleted.
 
@@ -98,6 +105,7 @@ Settled 24 Oct: viewer hub, chip composer, Grid | Runs, compact Chat cards, Chat
 - [ ] Verify stream draining and independent GPU/cloud work with real services. Live authenticated Bifrost ai/text discussion completed in 9.081 seconds with 1556 characters and no media jobs. Managed Radiance stream draining still needs live verification; LiteLLM → Bifrost migration is separate.
 - [ ] Verify video limits come from the worker (frame maximum, frame grid, area limit) and out-of-range requests are rejected, not silently adjusted.
 - [ ] Held video work while the worker is off stays owner-scoped, counts against limits and drains in order without cloud fallback.
+- [ ] Mark `image-kroma-turbo-w8a8-*` and `h3-singularity-*` profiles NSFW in Studio's runtime definitions and ai's seeds.
 - [ ] Review the large rewrite before merge; keep production single-replica with Recreate. Publish and deploy only through the verified image pipeline.
 
 ## Deferred Decisions & Work
