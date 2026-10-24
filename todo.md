@@ -17,14 +17,14 @@ Bring `rewrite/mantine` beyond legacy Studio: a clean, Grok Imagine-like media w
 
 Shared owners first, so later work reuses them instead of adding copies. Audit evidence: `/private/tmp/studio-audit-reports/`.
 
-- [ ] F1 Extract one `GenerationEditor` used by the gallery composer, viewer hub and Chat cards (prompt, history, assistant, chip rail, references, masks, settings, footer, submit shortcut). Callers keep only their state and submit.
+- [x] F1 Extract one `GenerationEditor` used by the gallery composer, viewer hub and Chat cards (prompt, history, assistant, chip rail, references, masks, settings, footer, submit shortcut). Callers keep only their state and submit.
 - [ ] F2 One exported `queryOptions` per server resource beside its owner (`models`, `own-account`, `lora-info`, …); one `Account` type; `UpscaleQuality` from `shared/`.
 - [ ] F3 One `useIsAdmin()` and one `usePhone()` (from theme breakpoints); replace the four admin checks and 13 media-query strings.
 - [ ] F4 Shared `ConfirmDialog`, `StudioLogo` and `copyText(text, label)`; replace the hand-built copies. Done outside generation; ReferencePicker still needs `ConfirmDialog` and LoraPicker `copyText`, then make `label` required.
 - [ ] F5 Errors: failed forms render `mutation.error` inline; action failures use one `MutationCache` `onError` default. Remove per-call `onError: failure` and duplicate surfaces.
 - [ ] F6 One shared item-actions list for tiles, context menus, viewer and Chat results, with consistent icons, order and heights.
 - [x] F7 `WorkspaceSections` renders each section's icon, heading and description; Library and Settings share one definition shape.
-- [ ] F8 Move shell pieces into `features/shell/`; `ui/` keeps primitives without feature imports; break the generation↔sessions import cycle. Shell move done; the import cycle is part of F1.
+- [x] F8 Move shell pieces into `features/shell/`; `ui/` keeps primitives without feature imports; break the generation↔sessions import cycle.
 - [ ] F9 Theme: one self-contained `theme.ts` with glass surfaces throughout via theme defaults, shared `ActionIcon` sizes, tokens and `AppShell` styles; co-locate remaining single-consumer CSS as modules and delete CSS that repeats Mantine's baseline.
 
 ## Redesign (R) — Large, after F
