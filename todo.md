@@ -29,7 +29,7 @@ Shared owners first, so later work reuses them instead of adding copies. Audit e
 
 ## Redesign (R) — Large, after F
 
-Follow the updated `UI-PATTERNS.md`; target a clean Grok Imagine-like flow. Fold the audit fixes into each item.
+Follow the updated `UI-PATTERNS.md`; target a clean Grok Imagine-like flow. Fold the audit fixes into each item. Each item ships with fluid, tasteful motion and is checked in the browser for jank, layout shift and intuitive flow on desktop and phone.
 
 - [ ] R1 Composer: prompt box with history inside it and a chip rail (Profile with readiness, Aspect, Count, References with numbered thumbnails, LoRAs with summary, Presets, Expert popover showing only settings the profile supports; Frames or Duration, not both; fixed seed visible). Image/Video navigates `/images`↔`/video`; Clear resets the operation; one submit label and blocked reason; submit notifies and shows the pending tile. Phones keep the full-height editor with roomy, easy-to-edit text. 2K/4K output where profiles support it.
 - [ ] R2 Viewer hub: prefilled prompt bar and variation strip; Star, Download/Share, Upscale, Animate ▾ (LLM themes incl. Spicy for NSFW grants and Custom Instruction), Regenerate ▾ (new seed / Exact Repeat), Copy Prompt/Settings; curated details (profile, LoRAs, references, seed/steps, output, timing); remembered desktop sidebar (default open); phone full-bleed with swipe navigate/close/details; neighbour prefetch and position; no overlapping close.
