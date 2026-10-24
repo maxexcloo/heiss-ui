@@ -43,7 +43,7 @@ Follow the updated `UI-PATTERNS.md`; target a clean Grok Imagine-like flow. Fold
 
 The MCP tools use a lot of context and iterations often call tools wrongly. The same backend serves Chat.
 
-- [ ] M1 Measure tool count, schema size and typical call/response sizes; review failing iterations read-only in LibreChat (`chat.excloo.com`, see `../kubelab`) without changing live services or printing personal content.
+- [x] M1 Measured in fixtures: instructions 1,227 chars and 9 tools at 8.4k chars are modest; the cost is in results (1024px inline preview per output plus full settings records) and confusing schemas (27 Generate parameters, limits that contradict descriptions, multi-mode Reuse). Reviewing real LibreChat traces needs a read of production chat data, which the permission guard blocked (Question 3).
 - [ ] M2 Slim tool surface: fewer, clearer tools; short descriptions; compact schemas with enums/defaults; concise results that reference IDs instead of repeating inputs.
 - [ ] M3 Make iteration hard to get wrong: one iterate tool taking a result ID and changes; validation errors that say the correct call; examples in descriptions only where they prevent observed mistakes.
 - [ ] M4 Chat uses the same slimmed tools and taste profile; eval with `mise run eval:assistant`.
@@ -73,6 +73,8 @@ The MCP tools use a lot of context and iterations often call tools wrongly. The 
 
 1. Bring back 2K/4K/Megapixels sizing, per-run Smart Upscale and LoRA strength sliders/favourites/recents? Recommended: Megapixels in Aspect and per-run Smart Upscale in Expert; LoRA favourites later.
 2. Is the untracked `private/todo.md` retired?
+3. MCP traces: may I read recent Studio tool calls from LibreChat's database read-only (tool names, argument shapes and errors only, no message text printed)? It needs a permission rule for production reads, or you can export a few failing conversations. Meanwhile M2/M3 proceed from the measured causes.
+4. Kubelab's LibreChat Studio `promptPrefix` repeats and partly contradicts Studio's own MCP instructions. Remove it once M2/M3 land? Recommended: yes, in a separate kubelab PR.
 
 Settled 24 Oct: viewer hub, chip composer, Grid | Runs, compact Chat cards, Chat noun and LLM titles, unticked delete checklist, legacy-style Library/Settings, glass everywhere via one extractable theme, phone full-height editor, Dream as a fourth mode with idle-only capped generation and an LLM taste profile. Not wanted: gateway-based text readiness, centring the thread on the composer.
 
