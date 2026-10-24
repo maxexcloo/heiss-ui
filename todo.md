@@ -55,6 +55,10 @@ The MCP tools use a lot of context and iterations often call tools wrongly. The 
 - [ ] D3 `/dream` deck: swipe left discard, right keep, up keep + variations; Star and Animate buttons; pause and settings; discards retained and filterable.
 - [ ] D4 Suggestions: composer prompt ideas, viewer next-step chips and Chat context from the taste profile.
 
+## Later (L)
+
+- [ ] L1 CivArchive (`https://civarchive.com/`) as a Library download and lookup source alongside Civitai and Hugging Face: search/resolve model and LoRA pages, catalogue metadata and downloads through the existing download queue. Check its terms and API before building.
+
 ## Tests & Repository (T) — Small
 
 - [ ] T1 Split `tests/browser/workflows.spec.ts` into its topic specs, keeping only cross-feature journeys; share route mocks through `fixtures.ts`.
