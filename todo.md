@@ -2,84 +2,58 @@
 
 ## Goal
 
-Bring `rewrite/mantine` to clear parity with legacy Studio and beyond it in UI/UX quality, with one tidy, pattern-led codebase that stays maintainable. Done means every workstream below is checked off or explicitly deferred, `mise run check` and full browser acceptance pass on a fresh build, the preview is running and PR #61 is ready for review. Never merge or deploy; the user reviews first.
+Bring `rewrite/mantine` beyond legacy Studio: a clean, Grok Imagine-like media workflow (viewer iteration hub, chip composer, Runs, compact Chat, Dream with a learned taste profile), a lean MCP, and one tidy, pattern-led codebase that stays maintainable. Done means every workstream below is checked off or explicitly deferred, `mise run check` and full browser acceptance pass on a fresh build, the preview is running and PR #61 is ready for review. Never merge or deploy; the user reviews first.
 
 ## Working Rules
 
 - Follow `AGENTS.md` and `UI-PATTERNS.md`; its Code Structure section holds the implementation conventions. Compare behaviour against legacy (`/private/tmp/studio-legacy-60vrohc3`, sample instance `http://127.0.0.1:18990`), not just feature lists.
-- Work top to bottom. Foundations (F) land before the area workstreams that depend on them. One owner per file; serialise `mise run check`, builds and full browser runs.
+- Work top to bottom: Foundations (F), Redesign (R), MCP (M), Dream (D), Tests & Repository (T). One owner per file; serialise `mise run check`, builds and full browser runs.
 - One outcome per commit on `rewrite/mantine`, pushed after its focused checks pass. Rebuild `dist/` before browser runs; Playwright serves the build.
 - Items marked **(Q)** wait on Questions for Max. Do not implement them, do not stop for them: continue with the next item.
 - New questions go in Questions for Max with a recommendation; finished items are checked off with a short evidence note.
 - Never generate media or call cloud from tests or audits; cloud is offline. Do not change live infrastructure.
 
-## Foundations (F) — Large
+## Foundations (F) — Large, first
 
-Shared owners first, so area fixes reuse them instead of adding copies. Audit reports: `/private/tmp/studio-audit-reports/`.
+Shared owners first, so later work reuses them instead of adding copies. Audit evidence: `/private/tmp/studio-audit-reports/`.
 
-- [ ] F1 Extract one `GenerationEditor` used by the gallery composer and timeline cards (prompt, history, assistant, input rail, references, masks, settings, footer, submit shortcut). Cards keep only their form state and submit. Restores Prompt Assistant, masks, reference guards and blocked reasons in cards.
+- [ ] F1 Extract one `GenerationEditor` used by the gallery composer, viewer hub and Chat cards (prompt, history, assistant, chip rail, references, masks, settings, footer, submit shortcut). Callers keep only their state and submit.
 - [ ] F2 One exported `queryOptions` per server resource beside its owner (`models`, `own-account`, `lora-info`, …); one `Account` type; `UpscaleQuality` from `shared/`.
 - [ ] F3 One `useIsAdmin()` and one `usePhone()` (from theme breakpoints); replace the four admin checks and 13 media-query strings.
 - [ ] F4 Shared `ConfirmDialog`, `StudioLogo` and `copyText(text, label)`; replace the hand-built copies.
-- [ ] F5 Errors: failed forms render `mutation.error` inline; action failures use one `MutationCache` `onError` default. Remove per-call `onError: failure` and duplicate surfaces (generation submit, sign-in, Settings forms).
-- [ ] F6 One shared item-actions list for tile menu, context menu, viewer More menu and session results, with consistent icons, order and heights.
-- [ ] F7 `WorkspaceSections` renders each section's heading and description; Library and Settings navigation share one definition shape.
-- [ ] F8 Move shell pieces (status action, slideout, mode tabs, header options) into `features/shell/`; `ui/` keeps primitives without feature imports; break the generation↔sessions import cycle.
-- [ ] F9 Styling: co-locate single-consumer `.studio-*` rules as CSS modules, move tokens and `AppShell` styles into `theme.ts`, set shared `ActionIcon` defaults and remove per-call sizes/radii, delete CSS that repeats Mantine's baseline.
+- [ ] F5 Errors: failed forms render `mutation.error` inline; action failures use one `MutationCache` `onError` default. Remove per-call `onError: failure` and duplicate surfaces.
+- [ ] F6 One shared item-actions list for tiles, context menus, viewer and Chat results, with consistent icons, order and heights.
+- [ ] F7 `WorkspaceSections` renders each section's icon, heading and description; Library and Settings share one definition shape.
+- [ ] F8 Move shell pieces into `features/shell/`; `ui/` keeps primitives without feature imports; break the generation↔sessions import cycle.
+- [ ] F9 Theme: one self-contained `theme.ts` with glass surfaces throughout via theme defaults, shared `ActionIcon` sizes, tokens and `AppShell` styles; co-locate remaining single-consumer CSS as modules and delete CSS that repeats Mantine's baseline.
 
-## Generation Controls (G) — Medium
+## Redesign (R) — Large, after F
 
-- [ ] G1 Hide settings the selected profile cannot use (steps, count/variations, denoise, fps, frames, duration); show Frames or Duration, not both.
-- [ ] G2 Image/Video toggle navigates between `/images` and `/video`.
-- [ ] G3 Clear resets to the empty draft for the kind, dropping Refine/Animate operation, parent and preset.
-- [ ] G4 Compact composer uses the shared compact `ReferencePicker` with numbered thumbnails.
-- [ ] G5 One derived submit label and `blockedReason`, shown in the Generate tooltip and accessible description (focusable when blocked).
-- [ ] G6 Successful submit notifies and invalidates the gallery so the pending tile appears immediately.
-- [ ] G7 Profile picker shows readiness/offline state; dropdown wide enough for full names, opening downward.
-- [ ] G8 Desktop LoRA/Reference popovers drop phone Back/Use actions; LoRA panel loses repeated labels and the stray `0`, gains an empty state and a selection summary on its trigger.
-- [ ] G9 Size picker opens on the active mode, labels Video correctly and shows custom dimensions alongside presets.
-- [ ] G10 Selected references sit beside their trigger; preset deletion confirms and notifies; phone sticky footer has a background.
-- [ ] G11 Remove unreachable prompt validation; gate Allow Fallback on profiles with more than one worker.
-- [ ] G12 Keyboard: Escape in the reference picker's nested Slot select or filter popovers closes only that layer; focus stays on the moved LoRA after Move Earlier/Later.
-- [ ] G13 (Q) Count/Steps in the rail, fixed-seed chip, 2K/4K/Megapixels and per-run Smart Upscale, LoRA strength slider/favourites/recents.
+Follow the updated `UI-PATTERNS.md`; target a clean Grok Imagine-like flow. Fold the audit fixes into each item.
 
-## Gallery & Viewer (V) — Medium
+- [ ] R1 Composer: prompt box with history inside it and a chip rail (Profile with readiness, Aspect, Count, References with numbered thumbnails, LoRAs with summary, Presets, Expert popover showing only settings the profile supports; Frames or Duration, not both; fixed seed visible). Image/Video navigates `/images`↔`/video`; Clear resets the operation; one submit label and blocked reason; submit notifies and shows the pending tile. Phones keep the full-height editor with roomy, easy-to-edit text.
+- [ ] R2 Viewer hub: prefilled prompt bar and variation strip; Star, Download/Share, Upscale, Animate ▾ (LLM themes incl. Spicy for NSFW grants and Custom Instruction), Regenerate ▾ (new seed / Exact Repeat), Copy Prompt/Settings; curated details (profile, LoRAs, references, seed/steps, output, timing); remembered desktop sidebar (default open); phone full-bleed with swipe navigate/close/details; neighbour prefetch and position; no overlapping close.
+- [ ] R3 Gallery: Grid | Runs toggle with stacked run cards that fan out in place; progress, phase and Cancel on running tiles; failed tiles; selection extras (Select Failed/In Progress, Stop, Share, Delete key, context menu on selection, labelled bulk actions); Shift+F10 menus; tile captions and short accessible names; downloads use `outputName`; Try Again-only paging; poll only while work is active.
+- [ ] R4 Chat: compact cards with inline Edit (shared editor), edited submissions append at the bottom as one quiet line; Chat noun everywhere; LLM titles and Rename; Delete with unticked per-result checklist (needs store/route); staged Refine/Animate keeps its own input; multi-output grid; phone drawer title; fix duplicate keys and missing-key warning; stop polling when idle.
+- [ ] R5 Library & Settings: icon navigation, heading + description, segmented views, expanding search, filters in one popover, compact rows with status badges and row menus, Title Case `EmptyState`s, responsive phone layout. Settings restores Maintenance (Clear Failed, Export Gallery, Copy Diagnostics), About (version, changelog, licence, source, credits) and preferences still backed by behaviour; Workers gains Refresh; account copy fits single-user mode; sign-in errors inline.
+- [ ] R6 Shell & queue: status drawer → Settings keeps background location; queue rows show progress, phase and Title Case statuses; empty popovers size to content; runtime panel shows service state with distinct endpoint labels; overflow Theme icon.
+- [ ] R7 Keyboard: Escape in the reference picker's nested layers closes only that layer; focus stays on a moved LoRA.
 
-- [ ] V1 In-progress tiles show progress, phase and Cancel; failed tiles show the failure; Title Case status labels.
-- [ ] V2 Curated details: profile name, LoRAs, references, seed/steps/CFG/sampler, output size/file, timing, readable dates; remove the raw settings dump.
-- [ ] V3 Selection: Select Failed/In Progress, Stop selected running jobs, Share on phones, Delete key, context menu acting on the selection; labelled bulk actions.
-- [ ] V4 Shift+F10/ContextMenu key opens a tile's menu; tile accessible names use the short title.
-- [ ] V5 Viewer prefetches neighbours and shows position (n / total).
-- [ ] V6 Viewer action row fits on one line (desktop and phone) with consistent controls; close action no longer overlaps the details title; desktop details rail can be hidden.
-- [ ] V7 Tile captions show title, time and profile; downloads use `outputName`; distinct Recreate icon.
-- [ ] V8 Paging shows only Try Again after failure; gallery and facets poll only while work is active.
-- [ ] V9 Remove unused selection helpers; consistent toolbar control sizes.
-- [ ] V10 (Q) Gallery grouping and Hide Failed & Queued; Star as a primary viewer action.
+## MCP & Assistant (M) — Medium
 
-## Chat (C) — Medium, plus Max's requested tweaks
+The MCP tools use a lot of context and iterations often call tools wrongly. The same backend serves Chat.
 
-- [ ] C1 Cards use F1 `GenerationEditor`; Image/Video switch in cards picks a profile.
-- [ ] C2 Rename sessions via the existing PATCH route; tidy default titles from the first clause.
-- [ ] C3 Session results use the F6 shared actions (Star, Delete, Upscale, context menu).
-- [ ] C4 Staged Refine/Animate keeps its own input instead of overwriting the composer draft; opening a session keeps unsent composer references.
-- [ ] C5 Revision submissions render as one quiet line, not a repeated prompt bubble.
-- [ ] C6 One card header ("Iteration 2 · Refine of 1"); consistent action wording with the gallery; no repeated steps in metadata.
-- [ ] C7 Multi-output results use a compact grid; phone card footer does not wrap badly.
-- [ ] C8 Phone sessions drawer has one title; sidebar uses Title Case, times as well as dates, one noun (Chat or Session) and conversation-specific empty copy.
-- [ ] C9 Fix duplicate React keys in the timeline (`chat:`/`job:` prefixes) and the missing-key warning in `SessionIteration`.
-- [ ] C10 Session, chat and session-list polling stops once work is terminal and nothing streams; `useMediaAction` uses the job it already has.
-- [ ] C11 (Q) Session delete, text readiness from the gateway, thread alignment with the composer, and Max's Chat tweaks.
+- [ ] M1 Measure tool count, schema size and typical call/response sizes; review failing iterations read-only in LibreChat (`chat.excloo.com`, see `../kubelab`) without changing live services or printing personal content.
+- [ ] M2 Slim tool surface: fewer, clearer tools; short descriptions; compact schemas with enums/defaults; concise results that reference IDs instead of repeating inputs.
+- [ ] M3 Make iteration hard to get wrong: one iterate tool taking a result ID and changes; validation errors that say the correct call; examples in descriptions only where they prevent observed mistakes.
+- [ ] M4 Chat uses the same slimmed tools and taste profile; eval with `mise run eval:assistant`.
 
-## Shell, Queue, Library & Settings (S) — Medium
+## Dream & Taste (D) — Large, after R
 
-- [ ] S1 Status drawer → Settings keeps the background location.
-- [ ] S2 Queue rows show progress and phase with Title Case statuses; empty Queue popover/drawer sizes to content.
-- [ ] S3 About shows version, Changelog, Licence, Source and credit links.
-- [ ] S4 Runtime panel shows the service state, defaults to the worst/active endpoint and labels endpoints distinctly.
-- [ ] S5 Library tables: responsive filters, empty state outside the scroll container, untruncated status; shared `EmptyState` Title Case copy; remove Refresh Downloads.
-- [ ] S6 Account: single-user copy, account name as `Menu.Label`, sign-in errors inline, `LoadingState` in Settings sections.
-- [ ] S7 Phone overflow Theme icon; status-drawer button labelled Workers.
-- [ ] S8 (Q) Restore Settings sections (Studio preferences, Maintenance, model defaults), worker Test/Refresh, navigation icons and descriptions.
+- [ ] D1 Taste profile: LLM-maintained, editable summary from swipes, stars, iterations, prompts and LoRAs; stored per account.
+- [ ] D2 Dream scheduler: idle-only, yields to user and text work, unseen buffer and daily cap; images, videos and NSFW-granted spicy content; separate pool until kept.
+- [ ] D3 `/dream` deck: swipe left discard, right keep, up keep + variations; Star and Animate buttons; pause and settings; discards retained and filterable.
+- [ ] D4 Suggestions: composer prompt ideas, viewer next-step chips and Chat context from the taste profile.
 
 ## Tests & Repository (T) — Small
 
@@ -97,17 +71,10 @@ Shared owners first, so area fixes reuse them instead of adding copies. Audit re
 
 ## Questions for Max
 
-1. Chat tweaks: which changes do you want? (C11)
-2. Session delete: add a store/route and Delete action? Recommended: yes, with confirmation.
-3. Settings: which dropped sections return — Studio preferences (Enter to Generate, Date Headers, Shortcuts, Auto-Resize Inputs, Run Several Images As, Previews While Generating), Maintenance (Clear Failed, Export Gallery, Copy Diagnostics), model defaults? Recommended: Maintenance and the preferences still backed by behaviour.
-4. Workers: manual Test/Refresh while AI Control owns lifecycle? Recommended: Refresh only.
-5. Navigation icons and descriptions in Library and Settings, as legacy had? Recommended: yes.
-6. Gallery grouping (runs, date moments) and Hide Failed & Queued? Recommended: Hide Failed & Queued only.
-7. Star as a primary viewer action on desktop and phone? Recommended: yes.
-8. Generation: Count in the rail, fixed-seed chip, 2K/4K/Megapixels, per-run Smart Upscale, LoRA strength slider/favourites/recents? Recommended: Count and seed chip now; the rest as you prefer.
-9. Text status: should the `ai/text` gateway count towards text readiness when local text workloads are offline? Recommended: yes.
-10. Chat thread: share the composer's centre line on desktop? Recommended: yes.
-11. Is the untracked `private/todo.md` retired?
+1. Bring back 2K/4K/Megapixels sizing, per-run Smart Upscale and LoRA strength sliders/favourites/recents? Recommended: Megapixels in Aspect and per-run Smart Upscale in Expert; LoRA favourites later.
+2. Is the untracked `private/todo.md` retired?
+
+Settled 24 Oct: viewer hub, chip composer, Grid | Runs, compact Chat cards, Chat noun and LLM titles, unticked delete checklist, legacy-style Library/Settings, glass everywhere via one extractable theme, phone full-height editor, Dream as a fourth mode with idle-only capped generation and an LLM taste profile. Not wanted: gateway-based text readiness, centring the thread on the composer.
 
 ## Required Before Cutover
 
