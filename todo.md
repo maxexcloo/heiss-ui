@@ -25,18 +25,21 @@ Shared owners first, so later work reuses them instead of adding copies. Audit e
 - [ ] F6 One shared item-actions list for tiles, context menus, viewer and Chat results, with consistent icons, order and heights.
 - [x] F7 `WorkspaceSections` renders each section's icon, heading and description; Library and Settings share one definition shape.
 - [x] F8 Move shell pieces into `features/shell/`; `ui/` keeps primitives without feature imports; break the generation↔sessions import cycle.
-- [ ] F9 Theme: one self-contained `theme.ts` with glass surfaces throughout via theme defaults, shared `ActionIcon` sizes, tokens and `AppShell` styles; co-locate remaining single-consumer CSS as modules and delete CSS that repeats Mantine's baseline.
+- [ ] F9 Theme (theme module, glass tokens and defaults done; remove per-call ActionIcon size/radius and move feature CSS to co-located modules): one self-contained `theme.ts` with glass surfaces throughout via theme defaults, shared `ActionIcon` sizes, tokens and `AppShell` styles; co-locate remaining single-consumer CSS as modules and delete CSS that repeats Mantine's baseline.
 
 ## Redesign (R) — Large, after F
 
 Follow the updated `UI-PATTERNS.md`; target a clean Grok Imagine-like flow. Fold the audit fixes into each item.
 
-- [ ] R1 Composer: prompt box with history inside it and a chip rail (Profile with readiness, Aspect, Count, References with numbered thumbnails, LoRAs with summary, Presets, Expert popover showing only settings the profile supports; Frames or Duration, not both; fixed seed visible). Image/Video navigates `/images`↔`/video`; Clear resets the operation; one submit label and blocked reason; submit notifies and shows the pending tile. Phones keep the full-height editor with roomy, easy-to-edit text.
+- [ ] R1 Composer: prompt box with history inside it and a chip rail (Profile with readiness, Aspect, Count, References with numbered thumbnails, LoRAs with summary, Presets, Expert popover showing only settings the profile supports; Frames or Duration, not both; fixed seed visible). Image/Video navigates `/images`↔`/video`; Clear resets the operation; one submit label and blocked reason; submit notifies and shows the pending tile. Phones keep the full-height editor with roomy, easy-to-edit text. 2K/4K output where profiles support it.
 - [ ] R2 Viewer hub: prefilled prompt bar and variation strip; Star, Download/Share, Upscale, Animate ▾ (LLM themes incl. Spicy for NSFW grants and Custom Instruction), Regenerate ▾ (new seed / Exact Repeat), Copy Prompt/Settings; curated details (profile, LoRAs, references, seed/steps, output, timing); remembered desktop sidebar (default open); phone full-bleed with swipe navigate/close/details; neighbour prefetch and position; no overlapping close.
 - [ ] R3 Gallery: Grid | Runs toggle with stacked run cards that fan out in place; progress, phase and Cancel on running tiles; failed tiles; selection extras (Select Failed/In Progress, Stop, Share, Delete key, context menu on selection, labelled bulk actions); Shift+F10 menus; tile captions and short accessible names; downloads use `outputName`; Try Again-only paging; poll only while work is active.
 - [ ] R4 Chat: compact cards with inline Edit (shared editor), edited submissions append at the bottom as one quiet line; Chat noun everywhere; LLM titles and Rename; Delete with unticked per-result checklist (needs store/route); staged Refine/Animate keeps its own input; multi-output grid; phone drawer title; fix duplicate keys and missing-key warning; stop polling when idle.
 - [ ] R5 Library & Settings: fix family/model-type detection so installed models are not all Unclassified; icon navigation, heading + description, segmented views, expanding search, filters in one popover, compact rows with status badges and row menus, Title Case `EmptyState`s, responsive phone layout. Settings restores Maintenance (Clear Failed, Export Gallery, Copy Diagnostics), About (version, changelog, licence, source, credits) and preferences still backed by behaviour; Workers gains Refresh; account copy fits single-user mode; sign-in errors inline.
 - [ ] R6 Shell & queue: status drawer → Settings keeps background location; queue rows show progress, phase and Title Case statuses; empty popovers size to content; runtime panel shows service state with distinct endpoint labels; overflow Theme icon.
+- [ ] R8 LoRA picker rethink: desktop panel with a searchable card grid of compatible LoRAs (preview, title, type, favourite star; filters All/Favourites/types) beside the current stack (enable, strength slider, drag order); phones use a searchable list with the same stack controls. Favourites, no recents.
+- [ ] R9 Reference picker rethink: the profile's slots as numbered drop targets on top, Gallery/Uploads grid below with search and upload; tap fills the next empty slot, drag targets a slot, paste/drop files anywhere.
+- [ ] R10 Compare runs: same prompt and seed across 2–4 variants of LoRAs/strengths, profiles, prompts or steps/CFG, shown as a labelled side-by-side grid; starring the winner applies it and teaches the taste profile.
 - [ ] R7 Keyboard: Escape in the reference picker's nested layers closes only that layer; focus stays on a moved LoRA.
 
 ## MCP & Assistant (M) — Medium
@@ -46,6 +49,7 @@ The MCP tools use a lot of context and iterations often call tools wrongly. The 
 - [x] M1 Measured in fixtures: instructions 1,227 chars and 9 tools at 8.4k chars are modest; the cost is in results (1024px inline preview per output plus full settings records) and confusing schemas (27 Generate parameters, limits that contradict descriptions, multi-mode Reuse). Reviewing real LibreChat traces needs a read of production chat data, which the permission guard blocked (Question 3).
 - [ ] M2 Slim tool surface: fewer, clearer tools; short descriptions; compact schemas with enums/defaults; concise results that reference IDs instead of repeating inputs.
 - [ ] M3 Make iteration hard to get wrong: one iterate tool taking a result ID and changes; validation errors that say the correct call; examples in descriptions only where they prevent observed mistakes.
+- [ ] M5 After M2/M3 land, open a kubelab PR: remove the Studio spec `promptPrefix`, lower reasoning effort for the Studio spec and raise `maxContextTokens` to the `ai/text` model's maximum. Do not merge it without review.
 - [ ] M4 Chat uses the same slimmed tools and taste profile; eval with `mise run eval:assistant`.
 
 ## Dream & Taste (D) — Large, after R
@@ -75,13 +79,9 @@ The MCP tools use a lot of context and iterations often call tools wrongly. The 
 
 ## Questions for Max
 
-1. Bring back 2K/4K/Megapixels sizing, per-run Smart Upscale and LoRA strength sliders/favourites/recents? Recommended: Megapixels in Aspect and per-run Smart Upscale in Expert; LoRA favourites later.
-2. Is the untracked `private/todo.md` retired?
-3. MCP traces: may I read recent Studio tool calls from LibreChat's database read-only (tool names, argument shapes and errors only, no message text printed)? It needs a permission rule for production reads, or you can export a few failing conversations. Meanwhile M2/M3 proceed from the measured causes.
-4. Kubelab's LibreChat Studio `promptPrefix` repeats and partly contradicts Studio's own MCP instructions. Remove it once M2/M3 land? Recommended: yes, in a separate kubelab PR.
-5. The "thinks a ton" part is mostly the `ai/text` model's reasoning effort, set in ai/LibreChat rather than Studio. Lower it for the Studio chat spec once M2/M3 make calls unambiguous? Recommended: yes, try low effort and compare.
+None open.
 
-Settled 24 Oct: viewer hub, chip composer, Grid | Runs, compact Chat cards, Chat noun and LLM titles, unticked delete checklist, legacy-style Library/Settings, glass everywhere via one extractable theme, phone full-height editor, Dream as a fourth mode with idle-only capped generation and an LLM taste profile. Not wanted: gateway-based text readiness, centring the thread on the composer.
+Settled 24 Oct: viewer hub, chip composer, Grid | Runs, compact Chat cards, Chat noun and LLM titles, unticked delete checklist, legacy-style Library/Settings, glass everywhere via one extractable theme, phone full-height editor, Dream as a fourth mode with idle-only capped generation and an LLM taste profile. Not wanted: gateway-based text readiness, centring the thread on the composer, LoRA recents, Megapixels and per-run Smart Upscale. Also settled: 2K/4K returns; LoRA favourites and strength slider; LoRA and reference pickers redesigned (R8, R9); compare runs feed the taste profile (R10); read-only LibreChat trace review is approved; kubelab drops the duplicate Studio prompt prefix, lowers reasoning effort and uses the model's maximum context window once M2/M3 land; `private/todo.md` is mined into this backlog and then deleted.
 
 ## Required Before Cutover
 
