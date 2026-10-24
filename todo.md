@@ -55,6 +55,7 @@ The MCP tools use a lot of context and iterations often call tools wrongly. The 
 - [ ] M8 Load-aware ordering: fan-out sets run currently loaded models first to minimise GPU switches; replies give an ETA per set.
 - [ ] M9 Auto model pick: without a named model, Studio chooses suitable profiles from the prompt and the taste profile and explains the choice in one line.
 - [ ] M10 Result on request returns one contact-sheet image per run instead of per-image previews.
+- [ ] M11 MCP never upscales (or adds face detail) unless the user explicitly asks; quality tiers and words like "best" don't imply it.
 - [ ] M4 Chat uses the same slimmed tools and taste profile; eval with `mise run eval:assistant`.
 
 ## AI Control in Studio (A) — Large, after M
