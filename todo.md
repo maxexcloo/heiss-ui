@@ -87,7 +87,7 @@ The MCP tools use a lot of context and iterations often call tools wrongly. The 
 
 None open.
 
-Settled 24 Oct (later): no generation toasts; AI Control folds into Studio; no Renovate auto-merge for Studio images; both Kroma Turbo and H3 Singularity are NSFW; LibreChat config ships first, then the MCP backport.
+Settled 24 Oct (later): no generation toasts; AI Control folds into Studio; no Renovate auto-merge for Studio images; both Kroma Turbo and H3 Singularity are NSFW; LibreChat config ships first, then the MCP backport. LibreChat leak review (read-only) found no cross-user files or result links; result links stay owner-checked bearer links; the second LibreChat user stays a Studio administrator; kubelab PR #254 limits Studio MCP to LibreChat's Bifrost key (awaiting merge).
 
 Settled 24 Oct: viewer hub, chip composer, Grid | Runs, compact Chat cards, Chat noun and LLM titles, unticked delete checklist, legacy-style Library/Settings, glass everywhere via one extractable theme, phone full-height editor, Dream as a fourth mode with idle-only capped generation and an LLM taste profile. Not wanted: gateway-based text readiness, centring the thread on the composer, LoRA recents, Megapixels and per-run Smart Upscale. Also settled: 2K/4K returns; LoRA favourites and strength slider; LoRA and reference pickers redesigned (R8, R9); compare runs feed the taste profile (R10); read-only LibreChat trace review is approved; kubelab drops the duplicate Studio prompt prefix, lowers reasoning effort and uses the model's maximum context window once M2/M3 land; `private/todo.md` is mined into this backlog and then deleted.
 
